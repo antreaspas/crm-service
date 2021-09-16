@@ -1,0 +1,21 @@
+version: "3.7"
+services:
+  crm_service:
+    build: .
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - maria_db
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+  maria_db:
+    image: "mariadb:10"
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: crm-service-local-database
+      MYSQL_USER: crm-service-user
+      MYSQL_PASSWORD: crm-service-user-password
+      MYSQL_ROOT_PASSWORD: crm-service-user-password
