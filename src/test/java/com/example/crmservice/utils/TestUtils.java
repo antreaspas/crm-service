@@ -1,6 +1,8 @@
 package com.example.crmservice.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 public class TestUtils {
 
@@ -17,5 +19,10 @@ public class TestUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static MockMultipartFile generateMockMultipartFile() {
+        return new MockMultipartFile("photo", "foo.txt", MediaType.TEXT_PLAIN_VALUE,
+                "Hello World".getBytes());
     }
 }

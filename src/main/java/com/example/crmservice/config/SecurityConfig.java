@@ -30,7 +30,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .httpBasic()
                 .and()
                 .authorizeRequests()
-                .anyRequest().authenticated()
-                .and();
+                .anyRequest().authenticated();
     }
 }
