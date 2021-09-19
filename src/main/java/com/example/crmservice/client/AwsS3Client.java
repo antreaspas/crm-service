@@ -46,6 +46,7 @@ public class AwsS3Client {
                 .region(region)
                 .credentialsProvider(credentials);
         if (Strings.isNotBlank(properties.getEndpoint())) {
+            // Override for localstack
             URI endpoint = URI.create(properties.getEndpoint());
             s3ClientBuilder.endpointOverride(endpoint);
             presignerBuilder.endpointOverride(endpoint);
