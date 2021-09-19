@@ -1,5 +1,8 @@
 # CRM API Service
 
+A Spring Boot API service which allows management of users and customers of a CRM system. Persists customer and user
+data to MariaDB, and stores customers' photos in AWS S3.
+
 ## Running locally
 
 To run the application in a local environment, build the Spring Boot application's image and start a local environment
@@ -50,3 +53,24 @@ To clear all locally stored data and reset the environment:
 1. Run `docker-compose down`. This will wipe the data stored in the local database.
 2. Delete the `./localstack/data` directory that LocalStack creates and uses to persist the local S3 bucket.
 3. Run `docker-compose up` to start the services again.
+
+## Improvements
+
+List of additional tasks that can be done to improve the project:
+
+- Provision AWS infrastructure automatically using [Terraform](https://www.terraform.io/) or
+  the [AWS CDK](https://docs.aws.amazon.com/cdk/latest/guide/getting_started.html). Will automate provision of the AWS
+  RDS MariaDB instance, the ECR image repository, and the ECS cluster, as well as an IAM user for the application to
+  have S3 permissions, and an IAM user for CI/CD.
+- Cache customer photo IDs in the PhotoService. Currently, the application generates a pre-signed URL for each request
+  to the Customers resource which returns CustomerResponse DTOs. This can be optimised by caching the URL against the
+  photo ID to avoid unnecessary calls to AWS S3. Care should be taken to evict cached URLs when a customer updates their
+  photo or is deleted. An in-memory cache (e.g. using [Caffeine](https://github.com/ben-manes/caffeine)) should be
+  sufficient.
+- Migrate from basic auth to token authentication. Currently, the application supports HTTP Basic authentication which
+  means the user needs to send their credentials for every request they make. Instead, a better approach will be to
+  generate tokens for a login request (could be JWT or opaque depending on implementation), and the user can then use
+  the token to authenticate further requests. Two possible approaches to implement this are leveraging AWS Cognito for
+  user management, or implementing a login endpoint which generates the token. The latter could also be implemented in a
+  separate auth microservice.
+- AwsS3Client integration tests with [testcontainers + Localstack](https://www.testcontainers.org/modules/localstack/)
