@@ -1,8 +1,6 @@
 package com.example.crmservice.model.user;
 
-import lombok.AccessLevel;
 import lombok.Builder;
-import lombok.Getter;
 import lombok.Value;
 
 import javax.validation.constraints.NotBlank;
@@ -19,10 +17,6 @@ public class UserRequest {
     @Size(min = 4, max = 20)
     String password;
 
-    @Getter(AccessLevel.NONE)
-    Boolean admin;
+    boolean admin;
 
-    public Boolean isAdmin() {
-        return admin;
-    }
 }

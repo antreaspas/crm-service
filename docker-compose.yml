@@ -1,17 +1,19 @@
 version: "3.7"
 services:
   crm_service:
-    build: .
+    image: docker.io/library/crm-service:0.0.1-SNAPSHOT
+    container_name: crm_service
     restart: always
     ports:
       - "8080:8080"
     depends_on:
       - maria_db
+      - localstack
     environment:
       SPRING_PROFILES_ACTIVE: local
   maria_db:
-    image: "mariadb:10"
-    restart: always
+    image: mariadb:10
+    container_name: mariadb
     ports:
       - "3306:3306"
     environment:
@@ -19,3 +21,18 @@ services:
       MYSQL_USER: crm-service-user
       MYSQL_PASSWORD: crm-service-user-password
       MYSQL_ROOT_PASSWORD: crm-service-user-password
+
+  localstack:
+    image: localstack/localstack
+    container_name: localstack
+    hostname: localstackhost
+    ports:
+      - "4566:4566"
+    environment:
+      - AWS_DEFAULT_REGION=eu-west-2
+      - SERVICES=s3
+      - HOSTNAME=localstackhost
+      - DATA_DIR=/tmp/localstack/data
+    volumes:
+      - "./.localstack:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"

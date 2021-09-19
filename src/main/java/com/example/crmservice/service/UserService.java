@@ -37,7 +37,7 @@ public class UserService implements UserDetailsService {
         User user = User.builder()
                 .username(userRequest.getUsername())
                 .password(passwordEncoder.encode(userRequest.getPassword()))
-                .admin(userRequest.isAdmin() != null ? userRequest.isAdmin() : false)
+                .admin(userRequest.isAdmin())
                 .build();
         return userRepository.save(user);
     }
