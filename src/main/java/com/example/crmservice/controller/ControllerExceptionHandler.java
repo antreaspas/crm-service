@@ -1,6 +1,7 @@
 package com.example.crmservice.controller;
 
 import com.example.crmservice.exception.CustomerNotFoundException;
+import com.example.crmservice.exception.LastAdminUserException;
 import com.example.crmservice.exception.UserNotFoundException;
 import com.example.crmservice.exception.UsernameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
@@ -25,5 +26,11 @@ public class ControllerExceptionHandler {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "The requested username already exists")
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     public void handleUserNameAlreadyExists() {
+    }
+
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST,
+            reason = "Cannot delete this user as they are the last admin user remaining. Please create another admin user first.")
+    @ExceptionHandler(LastAdminUserException.class)
+    public void handleLastAdminUserException() {
     }
 }

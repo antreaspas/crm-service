@@ -1,5 +1,6 @@
 package com.example.crmservice.service;
 
+import com.example.crmservice.exception.LastAdminUserException;
 import com.example.crmservice.exception.UserNotFoundException;
 import com.example.crmservice.exception.UsernameAlreadyExistsException;
 import com.example.crmservice.model.security.UserPrincipal;
@@ -43,8 +44,10 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUserById(Long id) {
-        if (userRepository.existsById(id)) userRepository.deleteById(id);
-        else throw new UserNotFoundException();
+        User user = retrieveUserById(id);
+        if (user.isAdmin() && userRepository.countByAdminIsTrue() == 1)
+            throw new LastAdminUserException();
+        userRepository.deleteById(id);
     }
 
     public User patchUser(Long id, @Valid UserUpdateRequest updates) {

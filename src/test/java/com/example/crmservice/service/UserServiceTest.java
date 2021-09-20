@@ -1,5 +1,6 @@
 package com.example.crmservice.service;
 
+import com.example.crmservice.exception.LastAdminUserException;
 import com.example.crmservice.exception.UserNotFoundException;
 import com.example.crmservice.exception.UsernameAlreadyExistsException;
 import com.example.crmservice.model.user.User;
@@ -71,15 +72,33 @@ public class UserServiceTest {
 
     @Test
     public void testDeleteUserById() {
-        when(userRepository.existsById(eq(1L))).thenReturn(true);
+        when(userRepository.findById(eq(1L))).thenReturn(Optional.of(
+                User.builder()
+                        .username("username")
+                        .admin(true)
+                        .build()));
+        when(userRepository.countByAdminIsTrue()).thenReturn(2L);
         userService.deleteUserById(1L);
         verify(userRepository).deleteById(1L);
     }
 
     @Test
     public void testDeleteUserByIdThrowsWhenIdDoesNotExist() {
-        when(userRepository.existsById(eq(1L))).thenReturn(false);
+        when(userRepository.findById(eq(1L))).thenReturn(Optional.empty());
         assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(() -> userService.deleteUserById(1L));
+        verify(userRepository, never()).deleteById(any());
+    }
+
+    @Test
+    public void testDeleteUserByIdThrowsWhenUserIsTheLastAdminUser() {
+        when(userRepository.findById(eq(1L))).thenReturn(Optional.of(
+                User.builder()
+                        .id(1L)
+                        .username("username")
+                        .admin(true)
+                        .build()));
+        when(userRepository.countByAdminIsTrue()).thenReturn(1L);
+        assertThatExceptionOfType(LastAdminUserException.class).isThrownBy(() -> userService.deleteUserById(1L));
         verify(userRepository, never()).deleteById(any());
     }
 

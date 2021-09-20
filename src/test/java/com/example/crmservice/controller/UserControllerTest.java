@@ -1,5 +1,6 @@
 package com.example.crmservice.controller;
 
+import com.example.crmservice.exception.LastAdminUserException;
 import com.example.crmservice.exception.UserNotFoundException;
 import com.example.crmservice.model.user.User;
 import com.example.crmservice.model.user.UserRequest;
@@ -160,5 +161,13 @@ public class UserControllerTest {
         doThrow(new UserNotFoundException()).when(userService).deleteUserById(eq(1L));
         mockMvc.perform(delete("/v1/users/{userId}", 1))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(roles = "ADMIN")
+    public void testDeleteUserWhenUserIsLastAdminUser() throws Exception {
+        doThrow(new LastAdminUserException()).when(userService).deleteUserById(eq(1L));
+        mockMvc.perform(delete("/v1/users/{userId}", 1))
+                .andExpect(status().isBadRequest());
     }
 }
