@@ -8,9 +8,9 @@ import javax.validation.constraints.Size;
 @Value
 @Builder
 public class CustomerUpdateRequest {
-    @Size(max = 20)
+    @Size(min = 2, max = 20)
     String name;
 
-    @Size(max = 20)
+    @Size(min = 2, max = 20)
     String surname;
 }
